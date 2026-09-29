@@ -25,6 +25,11 @@ export function renderTemplateSelector(renderer: ManifestRenderer): void {
     configTemplateHandler("minimal", renderer).catch(console.error);
   });
 
+  const standardButton = createElement("button", { textContent: "Standard" });
+  standardButton.addEventListener("click", () => {
+    configTemplateHandler("standard", renderer).catch(console.error);
+  });
+
   const fullDefaultButton = createElement("button", { textContent: "Full Default" });
   fullDefaultButton.addEventListener("click", () => {
     configTemplateHandler("full-defaults", renderer).catch(console.error);
@@ -40,6 +45,7 @@ export function renderTemplateSelector(renderer: ManifestRenderer): void {
   });
 
   templateButtons.appendChild(minimalButton);
+  templateButtons.appendChild(standardButton);
   templateButtons.appendChild(fullDefaultButton);
   templateButtons.appendChild(customButton);
 

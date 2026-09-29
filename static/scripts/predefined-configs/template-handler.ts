@@ -11,9 +11,11 @@ import { createConfigParamTooltip, createElement, createInputRow } from "../../u
 import { getManifestCache } from "../../utils/storage";
 import { STRINGS } from "../../utils/strings";
 import { toastNotification } from "../../utils/toaster";
+import { buildPredefinedConfig } from "./config-builder";
 
-type TemplateTypes = "minimal" | "full-defaults" | "custom";
+type TemplateTypes = "minimal" | "standard" | "full-defaults" | "custom";
 declare const MINIMAL_PREDEFINED_CONFIG: string;
+declare const STANDARD_PREDEFINED_CONFIG: string;
 
 export async function configTemplateHandler(type: TemplateTypes, renderer: ManifestRenderer) {
   const org = localStorage.getItem("selectedOrg");
@@ -35,6 +37,8 @@ export async function configTemplateHandler(type: TemplateTypes, renderer: Manif
 
   if (type === "minimal") {
     await writeTemplate(renderer, await handleMinimalTemplate(), type, renderer.auth.octokit, org);
+  } else if (type === "standard") {
+    await writeTemplate(renderer, await handleStandardTemplate(), type, renderer.auth.octokit, org);
   } else if (type === "full-defaults") {
     await handleFullDefaultsTemplate(renderer);
   } else {
@@ -73,14 +77,18 @@ async function writeTemplate(renderer: ManifestRenderer, config: string, type: T
 
 async function handleMinimalTemplate(): Promise<string> {
   try {
-    const obj = JSON.parse(MINIMAL_PREDEFINED_CONFIG);
-    const parts = Array.from(Object.entries(obj)).map(([, value]) => {
-      return `\n  ${typeof value === "object" && value && "yamlConfig" in value && value.yamlConfig ? value.yamlConfig : ""}`;
-    });
-
-    return `plugins:${parts.join("")}`;
+    return buildPredefinedConfig(MINIMAL_PREDEFINED_CONFIG);
   } catch (error) {
     toastNotification("Failed to fetch minimal predefined config", { type: "error" });
+    throw error;
+  }
+}
+
+async function handleStandardTemplate(): Promise<string> {
+  try {
+    return buildPredefinedConfig(STANDARD_PREDEFINED_CONFIG);
+  } catch (error) {
+    toastNotification("Failed to fetch standard predefined config", { type: "error" });
     throw error;
   }
 }

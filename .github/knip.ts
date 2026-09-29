@@ -11,7 +11,6 @@ const config: KnipConfig = {
     "@supabase/supabase-js",
     "@ubiquity-os/ubiquity-os-kernel",
     "ajv",
-    "yaml",
     "simple-git",
     "@actions/core",
     "esbuild",
